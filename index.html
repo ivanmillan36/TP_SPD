@@ -617,6 +617,7 @@
               DxgkCbQueueDpc para poner en cola una llamada de procedimiento
               diferido (DPC).
             </li>
+          </ol>
             <h4>Arquitectura de pantalla de Windows 2000</h4>
             <p>
               La siguiente figura muestra los componentes necesarios para
@@ -829,7 +830,7 @@
               <li>Estándar de canal de datos de pantalla mejorada (E-DDC)</li>
               <li>Estándar EDID mejorado (E-EDID)</li>
             </ul>
-          </ol>
+          
         </div>
 
         <div class="texto__contenedor" id="alpaca6">
@@ -848,12 +849,17 @@
           <p>
             Para comprender algunas de las particularidades de la pila de
             gráficos actual, es importante comprender cómo tuvo que adaptarse a
-            los nuevos desafíos a lo largo de los años. Verá, hoy en día las
-            cosas son significativamente más complejas de lo que solían ser,
-            pero en los primeros tiempos solo había una pieza de software que
-            tenía acceso directo al hardware de gráficos: el servidor X. Este
-            enfoque simplificó la pila de gráficos porque no era necesario
-            sincronizar el acceso al hardware de gráficos entre varios clientes.
+            los nuevos desafíos a lo largo de los años.
+          </p>
+          <p>
+            Verá, hoy en día las cosas son significativamente más complejas de
+            lo que solían ser, pero en los primeros tiempos solo había una pieza
+            de software que tenía acceso directo al hardware de gráficos: el
+            servidor X. Este enfoque simplificó la pila de gráficos porque no
+            era necesario sincronizar el acceso al hardware de gráficos entre
+            varios clientes.
+          </p>
+          <p>
             En estos primeros días las aplicaciones hacían todo su dibujo de
             forma indirecta, a través del servidor X. Al usar Xlib, enviarían
             comandos de representación a través del protocolo X11 que el
@@ -862,8 +868,10 @@
             "traducción" es el trabajo de un controlador: toma un montón de
             comandos de renderización independientes del hardware como entrada y
             los traduce en comandos de hardware como esperaba la GPU objetivo.
+          </p>
+          <p>
             Dado que el servidor X era la única pieza de software que podía
-            comunicarse con el hardware de gráficos por diseño, estos
+            comunicarse con el hardware de gráficos, por diseño, estos
             controladores se escribieron específicamente para él, se
             convirtieron en módulos del servidor X en sí y en una parte integral
             de su arquitectura. Estos controladores de espacio de usuario se
@@ -881,9 +889,12 @@
           <p>
             Lo anterior cubre los gráficos 2D, ya que de eso se trataba el
             servidor X. Sin embargo, la llegada del hardware de gráficos 3D
-            cambió significativamente el escenario, como veremos ahora. En
-            Linux, los gráficos 3D se implementan a través de OpenGL, por lo que
-            la gente esperaba una implementación de este estándar que
+            cambió significativamente el escenario, como veremos ahora.
+          </p>
+
+          <p>
+            En Linux, los gráficos 3D se implementan a través de OpenGL, por lo
+            que la gente esperaba una implementación de este estándar que
             aprovecharía el nuevo y elegante hardware 3D, es decir, un libGL.so
             acelerado por hardware. Sin embargo, en un sistema en el que solo el
             servidor X tenía permitido acceder al hardware de gráficos, no
@@ -892,10 +903,13 @@
             implementación de OpenGL que enviaría comandos OpenGL al servidor X
             a través de una extensión del protocolo X11 y dejaría que el
             servidor X los tradujera en comandos de hardware reales como lo
-            había hecho antes con los comandos 2D. A esto lo llamamos
-            Renderizado Indirecto, ya que las aplicaciones no envían comandos de
-            renderizado directamente al hardware de gráficos, sino que, en
-            cambio, renderizan indirectamente a través del servidor X.
+            había hecho antes con los comandos 2D.
+          </p>
+          <p>
+            A esto lo llamamos Renderizado Indirecto, ya que las aplicaciones no
+            envían comandos de renderizado directamente al hardware de gráficos,
+            sino que, en cambio, renderizan indirectamente a través del servidor
+            X.
           </p>
           <img src="linux2.png" alt=" esquema linux" />
           <p>
@@ -904,10 +918,12 @@
             como juegos, que requerían renderizar grandes cantidades de
             primitivas 3D mientras se mantenían altas velocidades de cuadro. El
             problema estaba claro: envolver las llamadas OpenGL en el protocolo
-            X11 no era una solución válida. Para lograr un buen rendimiento en
-            aplicaciones 3D, los necesitábamos para acceder al hardware
-            directamente y eso requeriría repensar una gran parte de la pila de
-            gráficos.
+            X11 no era una solución válida.
+          </p>
+          <p>
+            Para lograr un buen rendimiento en aplicaciones 3D,
+            necesitábamos acceder al hardware directamente y eso requeriría
+            repensar una gran parte la pila de gráficos.
           </p>
           <h4>Ingresando a la infraestructura de renderizado directo (DRI)</h4>
           <p>
@@ -915,18 +931,25 @@
             a los clientes X comunicarse directamente con el hardware de
             gráficos. La implementación de DRI requirió cambios en varias partes
             de la pila de gráficos, incluido el servidor X, el kernel y varias
-            bibliotecas cliente. Aunque el tsaérmino DRI generalmente se refiere
-            a la arquitectura completa, a menudo también se usa para referirse
-            solo a la parte específica que involucra la interacción de
-            aplicaciones con el servidor X, así que tenga en cuenta este doble
-            significado cuando lea sobre este material en La Internet. Otra
-            parte importante de DRI es Direct Rendering Manager (DRM). Este es
-            el lado del kernel de la arquitectura DRI. Aquí, el kernel maneja
+            bibliotecas cliente.
+          </p>
+          <p>
+            Aunque el término DRI generalmente se refiere a la arquitectura
+            completa, a menudo también se usa para referirse solo a la parte
+            específica que involucra la interacción de aplicaciones con el
+            servidor X, así que tenga en cuenta este doble significado cuando
+            lea sobre este material en la Internet.
+          </p>
+          <p>
+            Otra parte importante de DRI es Direct Rendering Manager (DRM). Este
+            es el lado del kernel de la arquitectura DRI. Aquí, el kernel maneja
             aspectos sensibles como bloqueo de hardware, sincronización de
             acceso, memoria de video y más. DRM también proporciona al espacio
             de usuario una API que puede usar para enviar comandos y datos en un
             formato adecuado para las GPU modernas, lo que efectivamente permite
             que el espacio de usuario se comunique con el hardware de gráficos.
+          </p>
+          <p>
             Tenga en cuenta que muchas de estas cosas deben hacerse
             específicamente para el hardware de destino, por lo que hay
             diferentes controladores DRM para cada GPU. En mi sistema Ubuntu, el
@@ -949,33 +972,37 @@
             basados ​​en OpenGL pueden usar para generar gráficos 3D en Linux.
             Mesa puede proporcionar gráficos 3D acelerados aprovechando la
             arquitectura DRI para obtener acceso directo al hardware de gráficos
-            subyacente en su implementación de la API OpenGL. Cuando nuestra
-            aplicación 3D se ejecuta en un entorno X11, generará sus gráficos en
-            una superficie (ventana) asignada por el servidor X. Tenga en
-            cuenta, sin embargo, que con DRI esto sucederá sin la intervención
-            del servidor X, por lo que, naturalmente, hay algo de sincronización
-            que hacer entre los dos, ya que el servidor X todavía es dueño de la
-            ventana en la que Mesa está representando y es el encargado de
-            mostrar su contenido en la pantalla. Esta sincronización entre la
-            aplicación OpenGL y el servidor X es parte de DRI. La implementación
-            de GLX de Mesa (la extensión de la especificación OpenGL que se
-            dirige a la plataforma X11) usa DRI para comunicarse con el servidor
-            X y lograr esto. Mesa también tiene que usar DRM para muchas cosas.
-            La comunicación con el hardware de gráficos se realiza mediante el
-            envío de comandos (por ejemplo, "dibujar un triángulo") y datos (por
-            ejemplo, las coordenadas del vértice del triángulo, sus atributos de
-            color, normales, etc.). Este proceso generalmente implica la
-            asignación de un montón de búferes en el hardware de gráficos donde
-            se copian todos estos comandos y datos para que la GPU pueda acceder
-            a ellos y hacer su trabajo. Esto está habilitado por el controlador
-            DRM, que es la única pieza que se encarga de administrar la memoria
-            de video y que ofrece API al espacio de usuario (Mesa en este caso)
-            para hacer esto para el hardware de destino específico. DRM también
-            es necesario siempre que necesitemos asignar y administrar la
-            memoria de video en Mesa, por lo que cosas como crear texturas,
-            cargar datos en texturas, asignar búferes de color, profundidad o
-            plantilla, etc., requieren usar las API de DRM para el hardware de
-            destino.
+            subyacente en su implementación de la API OpenGL.
+          </p>
+          <p>
+            Cuando nuestra aplicación 3D se ejecuta en un entorno X11, generará
+            sus gráficos en una superficie (ventana) asignada por el servidor X.
+            Tenga en cuenta, sin embargo, que con DRI esto sucederá sin la
+            intervención del servidor X, por lo que, naturalmente, hay algo de
+            sincronización que hacer entre los dos, ya que el servidor X todavía
+            es dueño de la ventana en la que Mesa está representando y es el
+            encargado de mostrar su contenido en la pantalla. Esta
+            sincronización entre la aplicación OpenGL y el servidor X es parte
+            de DRI. La implementación de GLX de Mesa (la extensión de la
+            especificación OpenGL que se dirige a la plataforma X11) usa DRI
+            para comunicarse con el servidor X y lograr esto.
+          </p>
+          <p>
+            Mesa también tiene que usar DRM para muchas cosas. La comunicación
+            con el hardware de gráficos se realiza mediante el envío de comandos
+            (por ejemplo, "dibujar un triángulo") y datos (por ejemplo, las
+            coordenadas del vértice del triángulo, sus atributos de color,
+            normales, etc.). Este proceso generalmente implica la asignación de
+            un montón de búferes en el hardware de gráficos donde se copian
+            todos estos comandos y datos para que la GPU pueda acceder a ellos y
+            hacer su trabajo. Esto está habilitado por el controlador DRM, que
+            es la única pieza que se encarga de administrar la memoria de video
+            y que ofrece API al espacio de usuario (Mesa en este caso) para
+            hacer esto para el hardware de destino específico. DRM también es
+            necesario siempre que necesitemos asignar y administrar la memoria
+            de video en Mesa, por lo que cosas como crear texturas, cargar datos
+            en texturas, asignar búferes de color, profundidad o plantilla,
+            etc., requieren usar las API de DRM para el hardware de destino.
           </p>
           <img src="linux4.png" alt="esquema linux" />
         </div>
@@ -983,20 +1010,31 @@
         <div class="texto__contenedor" id="alpaca7">
           <h3>CONCLUSION</h3>
           <p class="texto__parrafo">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Et hic,
-            voluptas aspernatur exercitationem blanditiis rem iusto, pariatur
-            labore odit ratione tenetur unde ipsa quisquam sed reiciendis.
-            Explicabo perspiciatis maiores minima?
+            
           </p>
         </div>
 
         <div class="texto__contenedor" id="alpaca8">
           <h3>BIBLIOGRAFIA</h3>
           <p class="texto__parrafo">
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Qui atque
-            sed maiores ex, eos corporis assumenda nulla magni! Commodi iusto
-            consequatur voluptas! Dolorem, vero veniam? Optio expedita totam et
-            culpa?
+            <ul>
+              <li>
+                <a href="https://docs.microsoft.com/en-us/windows-hardware/drivers/display/windows-vista-and-later-display-driver-model-architecture">https://docs.microsoft.com/en-us/windows-hardware/drivers/display/windows-vista-and-later-display-driver-model-architecture</a>
+              </li>
+              <li>
+                <a href="https://blogs.igalia.com/itoral/2014/07/29/a-brief-introduction-to-the-linux-graphics-stack/">https://blogs.igalia.com/itoral/2014/07/29/a-brief-introduction-to-the-linux-graphics-stack/</a>
+              </li>
+              <li>
+                <a href="https://wiki.ubuntu.com/X/Architecture">https://wiki.ubuntu.com/X/Architecture</a>
+              </li>
+              <li>
+                <a href="https://es.wikipedia.org/wiki/Controlador_de_dispositivo">https://es.wikipedia.org/wiki/Controlador_de_dispositivo</a>
+              </li>
+              <li>
+                <a href="https://en.wikipedia.org/wiki/Display_driver">https://en.wikipedia.org/wiki/Display_driver</a>
+              </li>
+            </ul>
+            
           </p>
         </div>
       </div>
